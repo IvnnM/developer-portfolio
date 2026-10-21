@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 const navigationLinks = [
   { label: "Home", href: "/" },
@@ -27,9 +28,13 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="border-b px-6 py-4">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
-        <Link href="/" aria-label="Personal Developer Portfolio">
+    <header className="border-b border-line px-6 py-4">
+      <div className="mx-auto flex max-w-content items-center justify-between gap-6">
+        <Link
+          href="/"
+          className="font-semibold tracking-tight text-foreground underline-offset-4 hover:underline"
+          aria-label="Personal Developer Portfolio"
+        >
           Personal Developer Portfolio
         </Link>
 
@@ -38,32 +43,45 @@ export default function SiteHeader() {
           aria-label="Primary navigation"
           className="hidden md:block"
         >
-          <ul className="flex items-center gap-6">
+          <ul className="flex items-center gap-6 text-sm">
             {navigationLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href}>{link.label}</Link>
+                <Link
+                  href={link.href}
+                  className="text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                >
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <Link href="/resume" className="hidden md:inline-block">
-          Résumé
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/resume"
+            className="hidden text-sm text-muted underline-offset-4 hover:text-foreground hover:underline md:inline-block"
+          >
+            Résumé
+          </Link>
 
-        {/* Mobile toggle */}
-        <button
-          ref={menuButtonRef}
-          type="button"
-          className="md:hidden"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-navigation"
-          onClick={() => setIsMenuOpen((previous) => !previous)}
-          onKeyDown={handleEscape}
-        >
-          {isMenuOpen ? "Close" : "Menu"}
-        </button>
+          {/* Theme control */}
+          <ThemeToggle />
+
+          {/* Mobile toggle */}
+          <button
+            ref={menuButtonRef}
+            type="button"
+            className="rounded-md border border-line px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surface md:hidden"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setIsMenuOpen((previous) => !previous)}
+            onKeyDown={handleEscape}
+          >
+            {isMenuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
 
       {/* Mobile navigation */}
@@ -71,20 +89,28 @@ export default function SiteHeader() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="mt-4 md:hidden"
+          className="mt-4 rounded-lg border border-line p-4 md:hidden"
           onKeyDown={handleEscape}
         >
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-4 text-sm">
             {navigationLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} onClick={closeMenu}>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  className="text-muted underline-offset-4 hover:text-foreground hover:underline"
+                >
                   {link.label}
                 </Link>
               </li>
             ))}
 
             <li>
-              <Link href="/resume" onClick={closeMenu}>
+              <Link
+                href="/resume"
+                onClick={closeMenu}
+                className="text-muted underline-offset-4 hover:text-foreground hover:underline"
+              >
                 Résumé
               </Link>
             </li>

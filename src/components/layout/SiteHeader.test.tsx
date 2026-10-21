@@ -144,4 +144,12 @@ describe("SiteHeader", () => {
       })
     ).not.toBeInTheDocument();
   });
+
+  it("includes an accessible theme toggle control", () => {
+    render(<SiteHeader />);
+
+    expect(
+      screen.getByRole("button", { name: /switch to \w+ theme/i })
+    ).toBeInTheDocument();
+  });
 });
