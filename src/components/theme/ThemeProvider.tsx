@@ -4,8 +4,8 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import {
@@ -46,28 +46,51 @@ export function useTheme() {
   return useContext(ThemeContext);
 }
 
-export default function ThemeProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ThemeState>({
-    saved: null,
-    theme: "light",
-  });
+const SERVER_STATE: ThemeState = { saved: null, theme: "light" };
 
-  // Resolve the initial theme on the client, after hydration, from the
-  // same sources the pre-hydration script used. The pre-hydration script
-  // already painted the correct theme, so this only syncs state.
-  useEffect(() => {
-    const saved = readSavedTheme(window.localStorage);
-    setState({ saved, theme: resolveTheme(saved, getPrefersDarkTheme()) });
-  }, []);
+/**
+ * Theme is external state: a persisted choice plus the OS color-scheme
+ * media query. `useSyncExternalStore` reads it after hydration without
+ * synchronously setting React state inside an effect, and its server
+ * snapshot keeps the initial render hydration-safe.
+ */
+function createThemeStore() {
+  let state = SERVER_STATE;
+  let initialized = false;
+  let media: MediaQueryList | null = null;
+  const listeners = new Set<() => void>();
 
-  // Keep the document (and native form controls via color-scheme) in sync.
-  useEffect(() => {
-    applyTheme(state.theme);
-  }, [state.theme]);
+  const notify = () => {
+    for (const listener of listeners) {
+      listener();
+    }
+  };
 
-  // Follow OS preference changes, but only while no explicit choice exists.
-  useEffect(() => {
+  const update = (next: ThemeState) => {
+    state = next;
+    applyTheme(next.theme);
+    notify();
+  };
+
+  const handleMediaChange = (event: MediaQueryListEvent) => {
     if (state.saved !== null) {
+      return;
+    }
+
+    update({ saved: null, theme: resolveTheme(null, event.matches) });
+  };
+
+  const detachMedia = () => {
+    if (!media) {
+      return;
+    }
+
+    media.removeEventListener("change", handleMediaChange);
+    media = null;
+  };
+
+  const attachMedia = () => {
+    if (media || state.saved !== null) {
       return;
     }
 
@@ -75,37 +98,69 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    if (typeof media?.addEventListener !== "function") {
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    if (typeof query?.addEventListener !== "function") {
       return;
     }
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      setState((previous) =>
-        previous.saved !== null
-          ? previous
-          : { saved: null, theme: resolveTheme(null, event.matches) },
-      );
-    };
+    media = query;
+    media.addEventListener("change", handleMediaChange);
+  };
 
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
-  }, [state.saved]);
+  const initialize = () => {
+    if (initialized || typeof window === "undefined") {
+      return;
+    }
 
-  const setTheme = useCallback((theme: Theme) => {
-    persistTheme(theme);
-    setState({ saved: theme, theme });
-  }, []);
+    initialized = true;
+    const saved = readSavedTheme(window.localStorage);
+    state = { saved, theme: resolveTheme(saved, getPrefersDarkTheme()) };
+    applyTheme(state.theme);
+    attachMedia();
+  };
 
-  const toggleTheme = useCallback(() => {
-    setState((previous) => {
-      const next: Theme =
-        previous.theme === "dark" ? "light" : "dark";
-      // Idempotent write; safe even if the updater strands a second run.
-      persistTheme(next);
-      return { saved: next, theme: next };
-    });
-  }, []);
+  return {
+    getSnapshot: () => state,
+    getServerSnapshot: () => SERVER_STATE,
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      initialize();
+
+      return () => {
+        listeners.delete(listener);
+        if (listeners.size === 0) {
+          detachMedia();
+        }
+      };
+    },
+    setTheme: (theme: Theme) => {
+      persistTheme(theme);
+      detachMedia();
+      update({ saved: theme, theme });
+    },
+    toggleTheme: () => {
+      const theme: Theme = state.theme === "dark" ? "light" : "dark";
+      persistTheme(theme);
+      detachMedia();
+      update({ saved: theme, theme });
+    },
+  };
+}
+
+export default function ThemeProvider({ children }: { children: ReactNode }) {
+  const [store] = useState(createThemeStore);
+  const state = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    store.getServerSnapshot,
+  );
+
+  const setTheme = useCallback(
+    (theme: Theme) => store.setTheme(theme),
+    [store],
+  );
+
+  const toggleTheme = useCallback(() => store.toggleTheme(), [store]);
 
   const value: ThemeContextValue = {
     theme: state.theme,
