@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <SiteHeader />
-          <main id="main-content" className="flex-1">
+          <main id="main-content" className="flex flex-1 flex-col">
             {children}
           </main>
           <SiteFooter />

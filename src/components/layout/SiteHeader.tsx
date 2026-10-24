@@ -41,7 +41,7 @@ export default function SiteHeader() {
         {/* Desktop navigation */}
         <nav
           aria-label="Primary navigation"
-          className="hidden md:block"
+          className="hidden lg:block"
         >
           <ul className="flex items-center gap-6 text-sm">
             {navigationLinks.map((link) => (
@@ -60,7 +60,7 @@ export default function SiteHeader() {
         <div className="flex items-center gap-3">
           <Link
             href="/resume"
-            className="hidden text-sm text-muted underline-offset-4 hover:text-foreground hover:underline md:inline-block"
+            className="hidden text-sm text-muted underline-offset-4 hover:text-foreground hover:underline lg:inline-block"
           >
             Résumé
           </Link>
@@ -72,7 +72,7 @@ export default function SiteHeader() {
           <button
             ref={menuButtonRef}
             type="button"
-            className="rounded-md border border-line px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surface md:hidden"
+            className="rounded-md border border-line px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surface lg:hidden"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation"
@@ -89,7 +89,7 @@ export default function SiteHeader() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="mt-4 rounded-lg border border-line p-4 md:hidden"
+          className="mt-4 rounded-lg border border-line p-4 lg:hidden"
           onKeyDown={handleEscape}
         >
           <ul className="flex flex-col gap-4 text-sm">
