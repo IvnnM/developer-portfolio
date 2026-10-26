@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SiteHeader from "@/components/layout/SiteHeader";
+import SkipLink from "@/components/layout/SkipLink";
 import SiteFooter from "@/components/layout/SiteFooter";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { createThemeInitScript } from "@/lib/theme";
@@ -34,9 +35,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <SkipLink />
         <ThemeProvider>
           <SiteHeader />
-          <main id="main-content" className="flex flex-1 flex-col">
+          <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
             {children}
           </main>
           <SiteFooter />

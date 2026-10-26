@@ -78,4 +78,16 @@ describe("Homepage hero", () => {
     expect(styles).toContain("@keyframes hero-reveal");
     expect(styles).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
   });
+
+  it("allows hero copy to wrap when text spacing is enlarged", () => {
+    const source = readSource("./page.tsx");
+
+    expect(source).toContain("break-words");
+  });
+
+  it("uses the control-border token for the secondary call to action", () => {
+    const source = readSource("./page.tsx");
+
+    expect(source).toContain("border-control-line");
+  });
 });

@@ -1,13 +1,49 @@
+import { readFileSync } from "node:fs";
 import { render, screen, within } from "@testing-library/react";
+import { renderToStaticMarkup } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import SiteHeader from "./SiteHeader";
+
+function readSource(relativePath: string): string {
+  return readFileSync(new URL(relativePath, import.meta.url), "utf8");
+}
 
 describe("SiteHeader", () => {
   it("renders the site header", () => {
     render(<SiteHeader />);
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
+  });
+
+  it("keeps the mobile-navigation target mounted while closed", () => {
+    const { container } = render(<SiteHeader />);
+
+    const menuButton = screen.getByRole("button", {
+      name: /open menu/i,
+    });
+    const targetId = menuButton.getAttribute("aria-controls");
+
+    expect(targetId).toBe("mobile-navigation");
+    expect(container.querySelector(`#${targetId}`)).toBeInTheDocument();
+    expect(container.querySelector(`#${targetId}`)).toHaveAttribute("hidden");
+  });
+
+  it("includes server-rendered navigation for no-JavaScript visitors", () => {
+    const html = renderToStaticMarkup(<SiteHeader />);
+    const noscript = html.match(/<noscript>[\s\S]*?<\/noscript>/)?.[0] ?? "";
+
+    expect(noscript).toContain('aria-label="Primary navigation"');
+    expect(noscript).toContain('href="/about"');
+    expect(noscript).toContain('href="/resume"');
+  });
+
+  it("lets the header and actions wrap at narrow widths", () => {
+    const source = readSource("./SiteHeader.tsx");
+
+    expect(source).toContain("flex-wrap");
+    expect(source).toContain("ml-auto");
+    expect(source).toContain("break-words");
   });
 
   it("renders the five primary navigation links", () => {

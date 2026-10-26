@@ -56,3 +56,101 @@ describe("theme token consumption (source regression guard)", () => {
 
 /** The homepage must contain token-driven structural surface/text colors. */
 const TOKEN_CONSUMPTION = /bg-surface[\s"]|text-foreground/;
+
+function cssBlock(source: string, selector: string): string {
+  const start = source.indexOf(`${selector} {`);
+
+  if (start === -1) {
+    return "";
+  }
+
+  const end = source.indexOf("}", start);
+
+  return source.slice(start, end + 1);
+}
+
+function tokenValue(block: string, token: string): string | undefined {
+  return block.match(
+    new RegExp(`${token}:\\s*(#[0-9a-fA-F]{6})`),
+  )?.[1];
+}
+
+function relativeLuminance(hex: string): number {
+  const channels = [1, 3, 5].map((offset) => {
+    const value = Number.parseInt(hex.slice(offset, offset + 2), 16) / 255;
+
+    return value <= 0.04045
+      ? value / 12.92
+      : Math.pow((value + 0.055) / 1.055, 2.4);
+  });
+
+  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const lighter = Math.max(
+    relativeLuminance(foreground),
+    relativeLuminance(background),
+  );
+  const darker = Math.min(
+    relativeLuminance(foreground),
+    relativeLuminance(background),
+  );
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+describe("interactive control contrast (source regression guard)", () => {
+  const styles = readSource("../app/globals.css");
+
+  it("keeps control borders at >= 3:1 against page and surface backgrounds", () => {
+    const themeBlocks = [
+      ["light", cssBlock(styles, ":root")],
+      ["dark", cssBlock(styles, '[data-theme="dark"]')],
+      [
+        "no-JS dark",
+        cssBlock(
+          styles,
+          ':root:not([data-theme="light"]):not([data-theme="dark"])',
+        ),
+      ],
+    ] as const;
+
+    for (const [theme, block] of themeBlocks) {
+      const border = tokenValue(block, "--control-line");
+      const background = tokenValue(block, "--background");
+      const surface = tokenValue(block, "--surface");
+
+      expect(border, `${theme} must define --control-line`).toBeDefined();
+      expect(background, `${theme} must define --background`).toBeDefined();
+      expect(surface, `${theme} must define --surface`).toBeDefined();
+
+      if (!border || !background || !surface) {
+        throw new Error(`Missing contrast tokens in ${theme} theme`);
+      }
+
+      expect(
+        contrastRatio(border, background),
+        `${theme} control border versus background`,
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        contrastRatio(border, surface),
+        `${theme} control border versus surface`,
+      ).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("uses the control token only for interactive boundaries", () => {
+    const header = readSource("../components/layout/SiteHeader.tsx");
+    const themeToggle = readSource("../components/theme/ThemeToggle.tsx");
+    const page = readSource("../app/page.tsx");
+
+    expect(header).toContain("border-control-line");
+    expect(themeToggle).toContain("border-control-line");
+    expect(page).toContain("border-control-line");
+
+    // Decorative separators keep the quieter line token.
+    expect(styles).toContain("--line:");
+    expect(styles).toContain("--control-line:");
+  });
+});

@@ -4,7 +4,7 @@
  * Design tokens — Minimal Editorial
  *
  * A small, neutral, contrast-conscious palette. Every token pair is chosen
- * to meet WCAG 2.2 AA for its role (text >= 4.5:1 on its background).
+ * to meet WCAG 2.2 AA for its role (text >= 4.5:1; UI boundaries >= 3:1).
  * Tokens are plain CSS custom properties on :root; Tailwind utilities are
  * generated from the `@theme inline` mapping below.
  */
@@ -16,6 +16,7 @@
   --surface: #f7f7f8;      /* subtle raised area / hover fills */
   --muted: #55555f;        /* secondary text — ~7 : 1 on --background */
   --line: #e4e4e7;         /* hairline borders (decorative) */
+  --control-line: #767676; /* interactive borders — 4.5+ : 1 on background */
   --accent: #1d4ed8;       /* ~6 : 1 on --background */
   --accent-ink: #ffffff;   /* text on accent fills */
 
@@ -36,6 +37,7 @@
     --surface: #141417;
     --muted: #a3a3ab;      /* ~7 : 1 on --background */
     --line: #26262b;
+    --control-line: #8a8a93; /* interactive borders — 5+ : 1 on background */
     --accent: #93c5fd;     /* ~10 : 1 on --background */
     --accent-ink: #0b0b0d;
   }
@@ -50,6 +52,7 @@
   --surface: #141417;
   --muted: #a3a3ab;
   --line: #26262b;
+  --control-line: #8a8a93;
   --accent: #93c5fd;
   --accent-ink: #0b0b0d;
 }
@@ -61,6 +64,7 @@
   --color-surface: var(--surface);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-control-line: var(--control-line);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
 
