@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Developer Portfolio
 
-## Getting Started
+A statically exported personal developer portfolio showcasing projects, skills, experience, and a detailed case study. Content is data-driven and maintained in a single TypeScript module.
 
-First, run the development server:
+## Project purpose
+
+Present a professional, accessible, and responsive portfolio for a Full-Stack Developer, including an About/Education section, five skills categories, an experience timeline, a projects gallery, and a detailed inventory/project-tracking case study. Contact and Résumé routes are intentionally placeholders pending approved content.
+
+## Technology stack
+
+- **Framework:** Next.js 16.4.3 (App Router)
+- **UI:** React 19.3.0, TypeScript
+- **Styling:** Tailwind CSS v4 (via `@tailwindcss/turbopack`)
+- **Testing:** Vitest 5, React Testing Library, jsdom
+- **Linting:** ESLint 9 with `eslint-config-next`
+- **Build:** Static export (`output: "export"` in `next.config.ts`)
+
+## Current implemented routes
+
+| Route | Description |
+|---|---|
+| `/` | Home / hero |
+| `/about` | About, education, and five skills categories |
+| `/experience` | Experience timeline (newest first) |
+| `/projects` | Projects gallery |
+| `/projects/inventory-project-tracking` | Detailed case study |
+| `/contact` | Contact (placeholder — content coming soon) |
+| `/resume` | Résumé (placeholder — viewing/download coming soon) |
+
+## Local setup and development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The dev server supports hot reload.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Maintaining portfolio content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All portfolio content lives in `src/data/portfolio.ts`. Types and data are co-located there:
 
-## Learn More
+- `aboutParagraphs`, `education`, `skillCategories`
+- `experience`
+- `projects`, `inventoryProject`, `inventoryProjectTrackingCaseStudy`
 
-To learn more about Next.js, take a look at the following resources:
+Edit the typed arrays/objects in that file to update content. Keep changes consistent with the existing types and tests. Approved portfolio content must not be silently altered.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing and build commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint          # ESLint
+npx vitest run        # Unit/component tests
+npm run build         # Production build + static export to out/
+```
 
-## Deploy on Vercel
+For watch mode: `npx vitest`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Static export overview
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`next.config.ts` sets `output: "export"`. `npm run build` emits a fully static site to `out/`. The site is designed for static hosting with clean URLs and `.html` fallback handling (see `docs/deployment.md`).
+
+## Documentation
+
+- `docs/deployment.md` — static-export deployment process
+- `docs/testing.md` — testing strategy and checklists
+- `docs/qa/iteration-3-report.md` — Iteration 3 QA evidence
+- `docs/traceability.md` — task/requirement traceability
+
+## Current status
+
+Iteration 3 received **conditional owner acceptance on 28 October 2026**. It is **not production-released**. Open findings F-02 (production mobile Lighthouse ≥ 90 and compression/caching verification) and F-03 (static-host RSC prefetch and clean URL behavior) remain unresolved. See `docs/traceability.md`.
+
+No private contact information is published in this repository.
