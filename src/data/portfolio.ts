@@ -60,6 +60,16 @@ export type InventoryCaseStudy = {
   previews: readonly ProjectPreview[];
 };
 
+export type Profile = {
+  name: string;
+  title: string;
+};
+
+export const profile: Profile = {
+  name: "Ivan Medrano",
+  title: "Full-Stack Developer",
+};
+
 export const aboutParagraphs: readonly string[] = [
   "I'm a Full-Stack Developer with over a year of experience building and maintaining production web and mobile applications for local and international clients. I work across frontend and backend development, translating business requirements into practical software solutions, integrating APIs and third-party services, and delivering applications across web, iOS, and Android.",
   "My experience spans logistics, e-commerce, and business management systems, with a focus on building reliable applications that solve real operational problems.",
