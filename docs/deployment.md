@@ -55,9 +55,36 @@ After deploying, verify:
 - Keep the previous `out/` build artifact available for quick rollback.
 - Re-deploy the prior build directory if a regression is detected.
 - Document the deployed commit hash and build date for traceability.
-- No hosting provider or domain is specified in this repository; configure per your environment.
+- Hosting target: Vercel (see Vercel project settings below).
 
 ## Open findings
 
 - **F-02:** Production mobile Lighthouse ≥ 90; compression/caching verification. Status: OPEN.
 - **F-03:** Static-host RSC prefetch and clean URL behavior. Status: OPEN.
+
+## Vercel project settings (prepared)
+
+- Framework preset: Next.js
+- Build command: npm run build
+- Output directory: leave Vercel default / auto-detected.
+- Install command: default (npm install)
+- Clean URLs: handled by Vercel Next.js integration.
+- Rewrites: none required.
+- Headers: none required in repository config; verify on preview (F-02).
+- Configuration file: no vercel.json required.
+
+- F-03 remains OPEN. Verify on actual preview deployment before release.
+
+## Preview-deployment verification checklist (PENDING until preview exists)
+
+- Direct navigation and refresh on nested routes.
+- Client-side navigation between routes.
+- RSC prefetch requests and _rsc query handling.
+- Correct serving of exported HTML and /_next/static/ assets.
+- Production mobile Lighthouse Performance >= 90.
+- Compression and cache headers verified.
+- Contact email and external profile links work.
+- Resume PDF downloads.
+- No private resume or sensitive details published.
+- Essential keyboard navigation and mobile reflow.
+- 404 page renders for unknown routes.
