@@ -16,7 +16,7 @@ npx vitest            # watch mode
 
 Configuration: `vitest.config.ts` — jsdom environment, React plugin, tsconfig paths, setup file `src/test/setup.ts`.
 
-Tests live alongside source as `*.test.tsx` (13 test files, 99 tests).
+Tests live alongside source as `*.test.tsx` (14 test files, 120 tests).
 
 ## Lint and production build
 

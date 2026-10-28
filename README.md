@@ -4,7 +4,7 @@ A statically exported personal developer portfolio showcasing projects, skills, 
 
 ## Project purpose
 
-Present a professional, accessible, and responsive portfolio for a Full-Stack Developer, including an About/Education section, five skills categories, an experience timeline, a projects gallery, and a detailed inventory/project-tracking case study. Contact and Résumé routes are intentionally placeholders pending approved content.
+Present a professional, accessible, and responsive portfolio for a Full-Stack Developer, including an About/Education section, five skills categories, an experience timeline, a projects gallery, and a detailed inventory/project-tracking case study. Contact and Résumé routes are now implemented with public contact methods and a downloadable public résumé PDF.
 
 ## Technology stack
 
@@ -24,8 +24,8 @@ Present a professional, accessible, and responsive portfolio for a Full-Stack De
 | `/experience` | Experience timeline (newest first) |
 | `/projects` | Projects gallery |
 | `/projects/inventory-project-tracking` | Detailed case study |
-| `/contact` | Contact (placeholder — content coming soon) |
-| `/resume` | Résumé (placeholder — viewing/download coming soon) |
+| `/contact` | Contact (email, GitHub, LinkedIn, copy-to-clipboard) |
+| `/resume` | Résumé (web résumé with public PDF download) |
 
 ## Local setup and development
 
@@ -65,10 +65,13 @@ For watch mode: `npx vitest`.
 - `docs/deployment.md` — static-export deployment process
 - `docs/testing.md` — testing strategy and checklists
 - `docs/qa/iteration-3-report.md` — Iteration 3 QA evidence
+- `docs/qa/iteration-4-report.md` — Iteration 4 QA evidence
 - `docs/traceability.md` — task/requirement traceability
 
 ## Current status
 
 Iteration 3 received **conditional owner acceptance on 28 October 2026**. It is **not production-released**. Open findings F-02 (production mobile Lighthouse ≥ 90 and compression/caching verification) and F-03 (static-host RSC prefetch and clean URL behavior) remain unresolved. See `docs/traceability.md`.
+
+Iteration 4 (Contact and Résumé routes) is documented in `docs/qa/iteration-4-report.md` and `docs/traceability.md`; owner acceptance is **pending**. Production release is **NOT approved**.
 
 No private contact information is published in this repository.
