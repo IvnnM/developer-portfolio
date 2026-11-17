@@ -1,13 +1,35 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { animateSpring } from "@/lib/motion";
 
 export default function Home() {
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+
+    // Respect visitors who prefer reduced motion: no spring motion plays.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.style.transform = "translateY(0)";
+      return;
+    }
+
+    // Simulate the same visual start point as the old CSS keyframe
+    // (translateY(0.75rem / ~12px), but a touch slower for a brand hero).
+    animateSpring(el, (v) => {
+      el.style.transform = `translateY(${v}px)`;
+    }, 15, 0, { response: 0.6, damping: 1.0 });
+  }, []);
+
   return (
     <section
       aria-labelledby="home-heading"
       className="flex flex-1 items-center bg-background px-6 py-20 sm:py-24 lg:py-32"
     >
       <div className="mx-auto w-full max-w-content">
-        <div className="max-w-4xl motion-safe:animate-hero-reveal">
+        <div ref={heroRef} className="max-w-4xl">
           <p className="mb-6 flex flex-wrap items-center gap-3 break-words font-mono text-xs uppercase tracking-[0.2em] text-accent">
             <span aria-hidden="true" className="h-px w-8 bg-accent" />
             Full-Stack Developer

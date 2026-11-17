@@ -73,7 +73,14 @@ export default function SiteHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                  className="relative rounded-md px-3 py-2 text-muted transition-colors hover:text-foreground hover:bg-surface"
+                  onClick={(e) => {
+                    e.currentTarget.style.transform = "scale(0.96)";
+                    const timeout = setTimeout(() => {
+                      e.currentTarget.style.transform = "";
+                    }, 150);
+                    return () => clearTimeout(timeout);
+                  }}
                 >
                   {link.label}
                 </Link>
@@ -86,6 +93,13 @@ export default function SiteHeader() {
           <Link
             href="/resume"
             className="hidden text-sm text-muted underline-offset-4 hover:text-foreground hover:underline lg:inline-block"
+            onClick={(e) => {
+              e.currentTarget.style.transform = "scale(0.96)";
+              const timeout = setTimeout(() => {
+                e.currentTarget.style.transform = "";
+              }, 150);
+              return () => clearTimeout(timeout);
+            }}
           >
             Résumé
           </Link>
@@ -104,6 +118,7 @@ export default function SiteHeader() {
             aria-controls="mobile-navigation"
             onClick={() => setIsMenuOpen((previous) => !previous)}
             onKeyDown={handleEscape}
+            style={{ transform: "scale(0.97)", transition: "transform 100ms ease-out" }}
           >
             {isMenuOpen ? "Close" : "Menu"}
           </button>

@@ -1,84 +1,102 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — Minimal Editorial
- *
- * A small, neutral, contrast-conscious palette. Every token pair is chosen
- * to meet WCAG 2.2 AA for its role (text >= 4.5:1; UI boundaries >= 3:1).
- * Tokens are plain CSS custom properties on :root; Tailwind utilities are
- * generated from the `@theme inline` mapping below.
- */
+ /* Design tokens — Apple-style refinement (WWDC 2018 *Designing Fluid Interfaces*)
+  *
+  * Overrides the editorial-neutral palette with Apple's refined language:
+  *  - Warm, depth-aware surfaces (not flat)
+  *  - Restrained, warm accent (violet, not heavy blue)
+  *  - Typography rules: tighter tracking on large text, optical leading, mono labels
+  *  - Soft, subtle shadows only (no hard edges)
+  *
+  * Tokens live as CSS custom properties on :root; Tailwind utilities are
+  * generated from the `@theme inline` mapping below.
+  */
 
-:root {
-  /* Light theme (default) */
-  --background: #ffffff;   /* page background */
-  --foreground: #17171a;   /* primary text — 16+ : 1 on --background */
-  --surface: #f7f7f8;      /* subtle raised area / hover fills */
-  --muted: #55555f;        /* secondary text — ~7 : 1 on --background */
-  --line: #e4e4e7;         /* hairline borders (decorative) */
-  --control-line: #767676; /* interactive borders — 4.5+ : 1 on background */
-  --accent: #1d4ed8;       /* ~6 : 1 on --background */
-  --accent-ink: #ffffff;   /* text on accent fills */
+ :root {
+   /* Light theme (default) */
+   --background: #fafaf9;      /* warm paper white */
+   --foreground: #1c1917;      /* warm near-black */
+   --surface: #ffffff;         /* elevates gently above paper */
+   --surface-hover: #f5f5f4;   /* raised-hover surface */
+   --muted: #57534e;           /* soft muted text */
+   --line: #e7e5e4;            /* hairline border */
 
-  /* Structure */
-  --leading-body: 1.6;     /* editorial line height */
-  --container-content: 72rem; /* aligns the header/footer container max width */
-}
+   --accent: #7c3aed;          /* restrained violet — Apple accent */
+   --accent-ink: #ffffff;      /* text on accent fills */
+   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
 
-/*
- * Manual system override: when JavaScript has stored/set an explicit choice,
- * it wins over the OS preference below.
- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    /* No-JS fallback: follow the OS preference. */
-    --background: #0b0b0d;
-    --foreground: #ededf0; /* ~16 : 1 on --background */
-    --surface: #141417;
-    --muted: #a3a3ab;      /* ~7 : 1 on --background */
-    --line: #26262b;
-    --control-line: #8a8a93; /* interactive borders — 5+ : 1 on background */
-    --accent: #93c5fd;     /* ~10 : 1 on --background */
-    --accent-ink: #0b0b0d;
-  }
-}
+   /* Typography — Apple-style rules */
+   --font-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+   --font-mono: "Geist Mono", "SF Mono", "Monaco", ui-monospace, monospace;
+   --leading-heading: 1.05;    /* tight, newspaper-like leading on headings */
+   --leading-body: 1.55;       /* refined body leading */
+   --tracking-heading: -0.025em; /* tighter tracking on large text */
+   --tracking-body: 0;         /* neutral tracking on body */
+   --tracking-label: 0.15em;   /* mono label tracking */
 
-/* Explicit dark theme applied by the theme system. */
-[data-theme="dark"] {
-  color-scheme: dark;
+   /* Structure */
+   --container-content: 72rem; /* aligns the header/footer container max width */
 
-  --background: #0b0b0d;
-  --foreground: #ededf0;
-  --surface: #141417;
-  --muted: #a3a3ab;
-  --line: #26262b;
-  --control-line: #8a8a93;
-  --accent: #93c5fd;
-  --accent-ink: #0b0b0d;
-}
+   --line-strong: #767676; /* dark enough for 3:1+ contrast against backgrounds */
+ }
 
-@theme inline {
-  /* Colors */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-muted: var(--muted);
-  --color-line: var(--line);
-  --color-control-line: var(--control-line);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
+ /* Dark theme — warm, soft shadows, reduced eye strain */
+ [data-theme="dark"] {
+   color-scheme: dark;
+   --background: #1c1917;
+   --foreground: #f5f5f4;
+   --surface: #292524;
+   --surface-hover: #3a3533;
+   --muted: #a8a29e;
+   --line: #44403c;
+   --line-strong: #8a8a93;
+   --accent: #a78bfa;
+   --accent-ink: #0f0e0d;
+   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+ }
 
-  /* Typography */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --leading-body: var(--leading-body);
+ /* Respects the OS color-scheme preference by default. */
+ @media (prefers-color-scheme: dark) {
+   :root:not([data-theme="light"]):not([data-theme="dark"]) {
+     --background: #1c1917;
+     --foreground: #f5f5f4;
+     --surface: #292524;
+     --surface-hover: #3a3533;
+     --muted: #a8a29e;
+     --line: #44403c;
+     --line-strong: #8a8a93;
+     --accent: #a78bfa;
+     --accent-ink: #0f0e0d;
+     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+   }
+ }
 
-  /* Layout */
-  --container-content: var(--container-content);
+ @theme inline {
+   /* Colors */
+   --color-background: var(--background);
+   --color-foreground: var(--foreground);
+   --color-surface: var(--surface);
+   --color-muted: var(--muted);
+   --color-line: var(--line);
+   --color-line-strong: var(--line-strong);
+   --color-control-line: var(--line-strong);
+   --color-accent: var(--accent);
+   --color-accent-ink: var(--accent-ink);
 
-  /* Motion */
-  --animate-hero-reveal: hero-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+   /* Typography */
+   --font-sans: var(--font-sans);
+   --font-mono: var(--font-mono);
+   --leading-body: var(--leading-body);
+   --leading-heading: var(--leading-heading);
+   --tracking-heading: var(--tracking-heading);
+
+   /* Layout */
+   --container-content: var(--container-content);
+ }
 
 /*
  * Homepage intro reveal.

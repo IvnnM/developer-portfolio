@@ -13,7 +13,8 @@ export default function ProjectCard({
   return (
     <article
       aria-labelledby={titleId}
-      className="relative overflow-hidden border border-line bg-surface p-6 sm:p-8 lg:p-10"
+      className="relative overflow-hidden border border-line bg-surface p-6 sm:p-8 lg:p-10 transition-[box-shadow,border-color,transform] duration-200 hover:border-line-strong hover:shadow-md hover:shadow-[#00000014]"
+      style={{ transitionDuration: "200ms" }}
     >
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.55fr)] lg:gap-12">
         <div className="flex min-w-0 flex-col items-start">

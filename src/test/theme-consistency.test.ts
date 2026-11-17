@@ -117,11 +117,11 @@ describe("interactive control contrast (source regression guard)", () => {
     ] as const;
 
     for (const [theme, block] of themeBlocks) {
-      const border = tokenValue(block, "--control-line");
+      const border = tokenValue(block, "--line-strong");
       const background = tokenValue(block, "--background");
       const surface = tokenValue(block, "--surface");
 
-      expect(border, `${theme} must define --control-line`).toBeDefined();
+      expect(border, `${theme} must define --line-strong`).toBeDefined();
       expect(background, `${theme} must define --background`).toBeDefined();
       expect(surface, `${theme} must define --surface`).toBeDefined();
 
@@ -151,6 +151,6 @@ describe("interactive control contrast (source regression guard)", () => {
 
     // Decorative separators keep the quieter line token.
     expect(styles).toContain("--line:");
-    expect(styles).toContain("--control-line:");
+    expect(styles).toContain("--line-strong:");
   });
 });

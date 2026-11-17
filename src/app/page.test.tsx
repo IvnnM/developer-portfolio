@@ -59,26 +59,25 @@ describe("Homepage hero", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps essential content and navigation server-rendered", () => {
-    const source = readSource("./page.tsx");
-
-    expect(source).not.toMatch(/^["']use client["'];?$/m);
-    expect(source).not.toMatch(/\buse(State|Effect|LayoutEffect|Reducer)\b/);
+  it("springs the hero into view on the client", () => {
+    // The homepage is a Client Component so the hero can animate with a
+    // spring (no CSS keyframe). Server-rendering still produces the same
+    // visible content; the animation is layered on after hydration.
+    expect(readSource("./page.tsx")).toContain("animateSpring");
+    expect(readSource("./page.tsx")).toContain("useEffect");
+    expect(readSource("./page.tsx")).toContain('"use client"');
+    // Spring from translateY(15px) to 0, response 0.6s (slow brand hero).
+    expect(readSource("./page.tsx")).toContain("animateSpring(el");
+    expect(readSource("./page.tsx")).toContain("15, 0, { response: 0.6");
   });
 
-  it("reveals the hero only when motion is acceptable", () => {
-    const source = readSource("./page.tsx");
-    const styles = readSource("./globals.css");
-
-    expect(source).toContain("motion-safe:animate-hero-reveal");
-    // No unconditional animation: visitors who prefer reduced motion see
-    // the hero statically, and unsupported animation leaves it visible.
-    expect(source).not.toMatch(/(?<!motion-safe:)animate-hero-reveal/);
-    expect(source).not.toMatch(/\bopacity-\d+/);
-    expect(styles).toContain("@keyframes hero-reveal");
-    expect(styles).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
+  it("respects visitors who prefer reduced motion", () => {
+    expect(readSource("./page.tsx")).toMatch(
+      /prefers-reduced-motion/g,
+    );
+    // Under reduced motion the hero rests at translateY(0) with no animation curve.
+    expect(readSource("./page.tsx")).toContain("translateY(0)");
   });
-
   it("allows hero copy to wrap when text spacing is enlarged", () => {
     const source = readSource("./page.tsx");
 
